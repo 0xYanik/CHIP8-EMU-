@@ -1,11 +1,12 @@
 #include<iostream>
 #include <fstream>
+#include "raylib.h"
 #include "ds.h"
 
 
 
  void load_rom(){
-  std::ifstream file("k.txt",std::ios::binary | std::ios::ate);
+  std::ifstream file("code.txt",std::ios::binary | std::ios::ate);
   if(file.is_open()){
    std::streampos size  = file.tellg();
    char *buffer = new char[size];
@@ -27,14 +28,22 @@
  int main(){
  
     std::cout<<"start of the program"<<'\n' ;
+    ds_init();
     load_rom();
     std::cout<<"finished loading success";
+    InitWindow(640,320,"chip8 screen");
+    SetTargetFPS(60);
+    const int SCALE  = 10;
+    
 
 
 
-
-    while(true){
+    while(!WindowShouldClose()){
+      
+        for(int cycle = 0; cycle < 10; cycle++) {
       opcode = (ram[pc] << 8u) | ram[pc + 1];
+      std::cout << std::hex << "PC: " << pc-2 
+          << " OPCODE: " << opcode << std::endl;
       pc+=2;
       
 
@@ -139,10 +148,27 @@
                break;
              }
          
-      }
-      
+      }}
 
 
+
+      BeginDrawing();
+      ClearBackground(BLACK);
+     for (int y = 0; y < 32; y++) {
+    for (int x = 0; x < 64; x++) {
+        
+        // Calcul de l'index unique pour le tableau 1D
+        int index = (y * 64) + x;
+
+        if (display[index] == 1) { 
+            // Dessine le carré blanc à l'écran
+            DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE, WHITE);
+        }
     }
+}
+
+        EndDrawing();
+    }
+    CloseWindow();
     return 0;
  }

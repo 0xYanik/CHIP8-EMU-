@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include <random>
+
 uint8_t ram[4096];
 
 uint8_t reg[16];
@@ -87,25 +88,25 @@ void op_2nnn(){
 }
 
 void op_3xkk(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u; //shift the 8bits of kk to the right and make it 0x0x
+    uint8_t Vx = (opcode & 0x0F00u )>> 8u; //shift the 8bits of kk to the right and make it 0x0x
     uint16_t kk = opcode & 0x00FFu ;
     if(reg[Vx] == kk) pc+=2;
 }
 void op_4xkk(){
     
-     uint8_t Vx = opcode & 0x0F00u >> 8u; //shift the 8bits of kk to the right and make it 0x0x
+     uint8_t Vx = (opcode & 0x0F00u )>> 8u; //shift the 8bits of kk to the right and make it 0x0x
     uint16_t kk = opcode & 0x00FFu ;
     if(reg[Vx] != kk) pc+=2;
 }
 void op_5xy0(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
-    uint8_t Vy = opcode & 0X00F0u >> 4u;
+      uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
     if(reg[Vx]==reg[Vy]) pc+=2;
 }
 
 void op_6xkk(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     uint16_t kk = opcode & 0x00FFu;
     
     reg[Vx] = kk;
@@ -113,42 +114,42 @@ void op_6xkk(){
 }
 
 void op_7xkk(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
+    uint8_t Vx =( opcode & 0x0F00u )>> 8u;
     uint16_t kk = opcode & 0x00FFu;
     reg[Vx]+=kk;
 }
 void op_8xy0(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+        uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
      reg[Vx] = reg[Vy];
 
 }
 void op_8xy1(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+      uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
      reg[Vx] = reg[Vx] | reg[Vy] ;
 }
 void op_8xy2(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+      uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
      reg[Vx] = reg[Vx] & reg[Vy] ;
 
 }
 
 void op_8xy3(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+        uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
      reg[Vx] = reg[Vx] ^ reg[Vy] ;
      
 }
 
 void op_8xy4(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+      uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
      uint16_t sum = reg[Vx]+reg[Vy];
      if(sum >255) reg[0xF] = 1;
@@ -161,8 +162,8 @@ void op_8xy4(){
 }
 
 void op_8xy5(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+     uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
      if (reg[Vx] > reg[Vy]){
         reg[0xF]=1;
@@ -173,11 +174,11 @@ void op_8xy5(){
      reg[Vx]-=reg[Vy];
 }
 
-void op_8zy6(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+void op_8xy6(){
+     uint8_t Vx =( opcode & 0x0F00u) >> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
 
-     uint8_t lsb = Vx & 1; // to know the value of the l significant bit 
+     uint8_t lsb = reg[Vx] & 1; // to know the value of the l significant bit 
      if (lsb ==1) reg[0xF] = 1;
      else reg[0xF] = 0;
 
@@ -187,10 +188,10 @@ void op_8zy6(){
 }
 
 void op_8xy7(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+     uint8_t Vy = (opcode & 0X00F0u) >> 4u;
 
-     if(reg[Vy]>reg[Vy]){
+     if(reg[Vy]>reg[Vx]){
         reg[0xF] = 1;
 
      }else reg[0xF] = 0;
@@ -199,10 +200,10 @@ void op_8xy7(){
 }
 
 void op_8xyE(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+     uint8_t Vy = (opcode & 0X00F0u) >> 4u;
 
-     uint8_t msb = Vx & 0x8;;
+     uint8_t msb = (reg[Vx] & 0x80u) >> 7u;//decaler le 7 bit adroite 
      if (msb == 1) reg[0xF] = 1;
      else reg[0xF] = 0;
 
@@ -210,8 +211,8 @@ void op_8xyE(){
 }
 
 void op_9xy0(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
+     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+     uint8_t Vy = (opcode & 0X00F0u )>> 4u;
     if(reg[Vx] != reg[Vy]) pc+=2;
 }
 
@@ -233,31 +234,70 @@ void op_Cxkk(){
  uint8_t random_num = distrib(gen);
 
  uint16_t kk = opcode & 0x00FFu;
- uint8_t Vx = opcode & 0x0F00u >> 8u;
+ uint8_t Vx =( opcode & 0x0F00u) >> 8u;
 
  reg[Vx] = kk & random_num;
 
 }
 
-void op_Dxyn(){
-    // i didnt understand shit lets comback to at later hhh
-  /*  uint8_t Vx = opcode & 0x0F00u >> 8u;
-     uint8_t Vy = opcode & 0X00F0u >> 4u;
-    uint8_t nBytes  = (opcode & 0x000Fu);
-    for (uint16_t i  = reg_index; i<=reg_index+nBytes*8 ;i++){
-        display[reg[Vx]+(reg[Vy]*64)] 
-    } */
+void op_Dxyn() {
+    uint16_t width = 64;
+    uint16_t height = 32;
+    
+    // Extraction des registres et de la hauteur du sprite (n)
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t nbytes = (opcode & 0x000Fu);
+
+    // Coordonnées de départ (avec gestion du wrapping/modulo selon la spec CHIP-8)
+    uint8_t x_start = reg[Vx] % width;
+    uint8_t y_start = reg[Vy] % height;
+
+    // Réinitialisation du registre de collision VF
+    reg[0xF] = 0;
+
+    // Boucle sur chaque ligne du sprite (hauteur)
+    for (uint8_t row = 0; row < nbytes; row++) {
+        // Lecture de l'octet du sprite en RAM (l'index commence souvent à 0, pas à 1)
+        uint8_t sprite_byte = ram[reg_index + row];
+        
+        // Coordonnée Y actuelle (si le sprite dépasse le bas, il s'arrête ou wrap selon les versions)
+        uint8_t current_y = y_start + row;
+        if (current_y >= height) break; // Arrêt standard si on dépasse le bas de l'écran
+
+        // Boucle sur les 8 bits de l'octet (largeur fixe de 8 pixels pour un sprite CHIP-8)
+        for (uint8_t col = 0; col < 8; col++) {
+            uint8_t current_x = x_start + col;
+            if (current_x >= width) break; // Arrêt standard si on dépasse la droite de l'écran
+
+            // On vérifie si le bit actuel du sprite est allumé (1)
+            // 0x80u vaut 10000000 en binaire. On décale vers la droite pour tester chaque bit.
+            if ((sprite_byte & (0x80u >> col)) != 0) {
+                
+                // Calcul de l'index 1D de l'écran
+                uint16_t screen_index = (current_y * width) + current_x;
+
+                // Détection de collision : si le pixel à l'écran est déjà allumé (1)
+                if (display[screen_index] == 1) {
+                    reg[0xF] = 1; // Collision détectée !
+                }
+
+                // Application du XOR (allume ou éteint le pixel)
+                display[screen_index] ^= 1; 
+            }
+        }
+    }
 }
 
 void op_Ex9E(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     if (keypad[reg[Vx]]){
         pc += 2;
     }
 }
 
 void op_ExA1(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     if(keypad[reg[Vx]]==0){
         pc+=2;
     }
@@ -265,14 +305,14 @@ void op_ExA1(){
 
 
 void op_Fx07(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     reg[Vx] = delayT;
 }
 
 
 void op_Fx0A(){
     bool keyP  = false;
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     for (uint8_t i = 0;i<16;i++){
         if(keypad[i]==1){
             keyP = true;
@@ -291,22 +331,51 @@ void op_Fx0A(){
 
 
 void op_Fx15(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
-    delayT = Vx;
+    uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+    delayT = reg[Vx];
 }
 
 void op_Fx18(){
-    uint8_t Vx = opcode & 0x0F00u >> 8u;
-    soundT = Vx;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    soundT = reg[Vx];
 }
 
 void op_Fx1E(){
-     uint8_t Vx = opcode & 0x0F00u >> 8u;
+     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
      reg_index+=Vx;
 }
 
 void op_Fx29(){
-    
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    reg_index = 0x50 + reg[Vx] * 5;
 }
+
+
+void op_Fx33(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    ram[reg_index] = reg[Vx]/100;
+    ram[reg_index+1] = (reg[Vx]/10)%10;
+    ram[reg_index+2] = reg[Vx]%10;
+}
+
+
+void op_Fx55(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    for (uint8_t i = 0;i<=Vx;i++){
+        ram[reg_index+i] = reg[i];
+    }
+}
+
+
+void op_Fx65(){
+    uint8_t Vx = (opcode & 0x0F00u )>> 8u;
+       for (uint8_t i = 0;i<=Vx;i++){
+        reg[i] = ram[reg_index+i];
+    }
+}
+
+
+
+
 
 #endif
